@@ -1,0 +1,50 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import java.util.concurrent.TimeUnit;
+
+public class AutoScoutSearch {
+    public static void main(String[] args) {
+        // Set up the WebDriver (Chrome in this case)
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        
+        try {
+            // Open the AutoScout website
+            driver.get("https://www.autoscout.de/");
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            
+            // Accept cookies if prompted (depends on the site behavior)
+            // WebElement acceptCookiesButton = driver.findElement(By.id("consent-btn"));
+            // acceptCookiesButton.click();
+            
+            // Enter a car make in the search box
+            WebElement searchBox = driver.findElement(By.id("home.maindata.make"));
+            searchBox.sendKeys("BMW");
+            
+            // Click the search button
+            WebElement searchButton = driver.findElement(By.xpath("//button[@type='submit' and contains(text(),'Suchen')]"));
+            searchButton.click();
+            
+            // Wait for search results to load
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            
+            // Extract details of the first search result
+            WebElement firstResult = driver.findElement(By.xpath("//div[@data-item-name='list-item']"));
+            String carName = firstResult.findElement(By.xpath(".//h2")).getText();
+            String carPrice = firstResult.findElement(By.xpath(".//div[@data-item-name='price']")).getText();
+            String carDetails = firstResult.findElement(By.xpath(".//ul")).getText();
+            
+            // Print the car details
+            System.out.println("Car Name: " + carName);
+            System.out.println("Car Price: " + carPrice);
+            System.out.println("Car Details: " + carDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser
+            driver.quit();
+        }
+    }
+}
